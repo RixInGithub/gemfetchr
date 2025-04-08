@@ -9,6 +9,14 @@ local function splitByNl(a)
 	return(b)
 end
 
+local function isoGarblesToUtf8(isoWtf)
+	return (isoWtf:gsub(".", function(a)
+		local b = string.byte(a)
+		if(b<128)then;return(a)end
+		return(string.char)(192+math.floor(b/64),128+(b%64))
+	end))
+end
+
 local describe = (function(a)
 	local b={}
 	for c,d in ipairs(splitByNl(a)) do
@@ -73,6 +81,9 @@ local function main(u, props, sess)
 			return
 		end
 		if(props.follow3x)then(function()toReturn.endedIn=(u)end)()end
+		if(string.find(toReturn.extraStat,";"))then
+			(print)(toReturn.extraStat:sub(string.find(toReturn.extraStat,";")+1))
+		end
 	end,function(e)
 		toReturn={err=e}
 	end)
